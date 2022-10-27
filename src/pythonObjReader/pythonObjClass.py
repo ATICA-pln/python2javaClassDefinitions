@@ -27,7 +27,7 @@ class pythonObjClass(object):
 		
 		
 	def print_java_class(self, package, useLombok=False, printConstructorWithArgs=True, \
-				printConstructorWithOutArgs=True, printGetSetters=True):
+				printConstructorWithOutArgs=True, printGetSetters=True, superclass= None):
 		
 		# print module
 		s = "package " + package + ";\n";
@@ -44,7 +44,13 @@ class pythonObjClass(object):
 			s = s + print_java_lombok();
 		
 		# print class definition	
-		s = s + "public class " + self.ObjClass + " {\n";
+		superclassDeclaration = "";
+		includeSuperclassDeclaration = False;
+		if (superclass is not None) & (len(superclass)>0):
+			includeSuperclassDeclaration = True;
+			superclassDeclaration = " extends " + superclass;
+		
+		s = s + "public class " + self.ObjClass + superclassDeclaration + " {\n";
 		s = s + "\n";	
 		
 		for attr in self.ObjAttributes:
@@ -52,7 +58,7 @@ class pythonObjClass(object):
 		s = s + "\n";
 		
 		if (not useLombok):
-			s = s + self.print_java_constructor(printConstructorWithArgs,printConstructorWithOutArgs);
+			s = s + self.print_java_constructor(printConstructorWithArgs,printConstructorWithOutArgs,includeSuperclassDeclaration);
 			
 		if printGetSetters:
 			s = s + self.print_java_get_setter();
@@ -70,12 +76,14 @@ class pythonObjClass(object):
 		
 		return s
 	
-	def print_java_constructor(self,printConstructorWithArgs,printConstructorWithOutArgs):
+	def print_java_constructor(self,printConstructorWithArgs,printConstructorWithOutArgs, includeSuperclassDeclaration):
 		
 		s = "";
 		if printConstructorWithOutArgs:
 			#s = s + "\t// Class constructor without arguments\n"
 			s = s + "\tpublic " + self.ObjClass + "(){\n"
+			if includeSuperclassDeclaration:
+				s = s + "\t\tsuper();\n";
 			s = s + "\t}\n";
 			s = s + "\n";
 			
@@ -89,6 +97,9 @@ class pythonObjClass(object):
 			
 			s = s[:-2] + ") {\n";
 			s = s + "\t\t\n";
+			
+			if includeSuperclassDeclaration:
+				s = s + "\t\tsuper();\n";
 			
 			# instantiate arguments
 			for attr in self.ObjAttributes:

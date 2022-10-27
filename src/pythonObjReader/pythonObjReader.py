@@ -6,8 +6,8 @@ Created on 20 oct 2022
 
 import types;
 import os;
-from src.pythonObjReader.pythonObjClass import pythonObjClass
-from src.pythonObjReader.pythonObjAttr import pythonObjAttr
+from .pythonObjClass import pythonObjClass
+from .pythonObjAttr import pythonObjAttr
 
 class pythonObjReader(object):
 	'''
@@ -18,8 +18,7 @@ class pythonObjReader(object):
 		self.package = package;
 		self.outputFolder = outputFolder;
 		
-		if (package is not None) & (package != ""):
-			self.outputFolder = outputFolder + "/" + package;
+		self.package = package;
 		
 		self.extension = ext;
 		
@@ -95,33 +94,35 @@ class pythonObjReader(object):
 		return listAllClasses
 	
 	def printObjDef2Java(self,pyObjClass=None,useLombok=False,printConstructorWithArgs=True,\
-				printConstructorWithOutArgs=True, printGetSetters=True):
+				printConstructorWithOutArgs=True, printGetSetters=True, superclassDeclaration=None):
 		
 		if pyObjClass == None:
 			
 			for pyObjClassType in self.Classes:
 				self.printObjDef2Java(self.Classes[pyObjClassType],useLombok, printConstructorWithArgs, \
 										printConstructorWithOutArgs, \
-										printGetSetters);		
+										printGetSetters, superclassDeclaration);		
 			
 		else:
 		
+			if (self.package is not None) & (self.package != ""):
+				outputFolder = self.outputFolder + "/" + self.package;
 			# check if directory exists
-			folderExist = os.path.exists(self.outputFolder);
+			folderExist = os.path.exists(outputFolder);
 			
 			if (not folderExist):
-				os.makedirs(self.outputFolder);
+				os.makedirs(outputFolder);
 		
 			# file name and path to file
 			FILE_NAME = pyObjClass.ObjClass + "." + self.extension;
-			FILE_PATH = self.outputFolder + "/" + FILE_NAME;
+			FILE_PATH = outputFolder + "/" + FILE_NAME;
 			
 			# print file
 			f = open(FILE_PATH,'w')
 			f.write(pyObjClass.print_java_class(self.package, useLombok, \
 										printConstructorWithArgs, \
 										printConstructorWithOutArgs, \
-										printGetSetters))
+										printGetSetters, superclassDeclaration))
 			f.close()	
 			
 			print("-> New object definition: " + pyObjClass.ObjClass + " saved in " + FILE_PATH);
