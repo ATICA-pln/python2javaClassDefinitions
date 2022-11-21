@@ -29,12 +29,18 @@ class pythonObjAttr(object):
 		s = "";
 		
 		# print get
-		s = s + "\tpublic " +  self.Class + " get" + attrName + "() {\n";
+		
+		if self.Class == 'boolean':
+			getFunc = 'is'
+		else:
+			getFunc = 'get'
+			
+		s = s + "\tpublic " +  self.Class + " " + getFunc + attrName + "() {\n";
 		s = s + "\t\treturn " + self.Name + ";\n";
 		s = s + "\t}\n\n"
 		
 		# print set
-		s = s + "\tpublic void " + " set" + attrName + "(" + \
+		s = s + "\tpublic void set" + attrName + "(" + \
 						self.Class + " " + self.Name + ") {\n";
 		s = s + "\t\tthis." + self.Name + " = " + self.Name + ";\n";
 		s = s + "\t}\n\n"
