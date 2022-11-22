@@ -8,6 +8,10 @@ class pythonObjAttr(object):
 	
 	def __init__(self, attrName, attrModule, attrType):
 		# Attribute name
+		
+		if attrName == 'package': # reserved keyword in Java, not to be used
+			attrName = 'myPackage'; 
+		
 		self.Name = attrName;
 		# Attribute type
 		self.ClassModule = attrModule;
